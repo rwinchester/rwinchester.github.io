@@ -19,7 +19,7 @@ const photos = files
     const stats = fs.statSync(filePath);
     return {
       filename: file,
-      src: `photos/${file}`, // Clean relative path (no double-encoding)
+      src: `./photos/${file}`, // Explicit relative path
       date: stats.birthtimeMs || stats.mtimeMs
     };
   })
