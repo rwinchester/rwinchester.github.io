@@ -3,7 +3,7 @@ name: Build and Deploy Photo Gallery
 on:
   push:
     branches:
-      - main # Change to 'master' if your default branch is named master
+      - main # Change to 'master' if your default branch is master
 
 permissions:
   contents: write
@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,6 +30,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add gallery-data.json
-          git status
-          git diff-index --quiet HEAD || git commit -m "Auto-update gallery index"
+          git commit -m "Auto-update gallery index" || exit 0
           git push
