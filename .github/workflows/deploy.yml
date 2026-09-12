@@ -3,8 +3,8 @@ name: Build and Deploy Photo Gallery
 on:
   push:
     branches:
-      - main
       - master
+      - main
 
 permissions:
   contents: write
@@ -24,12 +24,13 @@ jobs:
           node-version: 20
 
       - name: Generate Gallery Index
+        working-directory: ./photogallery
         run: node generate-gallery.js
 
       - name: Commit & Push updated index
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add gallery-data.json
+          git config --global user.email "github-actions[bot]"
+          git add photogallery/gallery-data.json
           git commit -m "Auto-update gallery index" || exit 0
           git push
