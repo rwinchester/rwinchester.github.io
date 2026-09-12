@@ -1,6 +1,5 @@
     async function loadGallery() {
       try {
-        // Updated to relative path
         const response = await fetch('./gallery-data.json');
         const photos = await response.json();
         const galleryElement = document.getElementById('gallery');
@@ -13,7 +12,8 @@
           wrapper.className = 'image-wrapper';
 
           const img = document.createElement('img');
-          img.src = photo.src;
+          // Encode spaces safely for browser fetching
+          img.src = encodeURI(photo.src);
           img.alt = photo.filename;
           img.loading = "lazy";
 
