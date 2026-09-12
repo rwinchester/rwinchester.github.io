@@ -3,7 +3,7 @@ name: Build and Deploy Photo Gallery
 on:
   push:
     branches:
-      - main # Change to 'master' if your default branch is master
+      - master
 
 permissions:
   contents: write
