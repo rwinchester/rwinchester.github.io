@@ -19,8 +19,7 @@ const photos = files
     const stats = fs.statSync(filePath);
     return {
       filename: file,
-      // Use relative path so it works inside any subfolder
-      src: `./photos/${encodeURIComponent(file)}`,
+      src: `photos/${file}`, // Clean relative path (no double-encoding)
       date: stats.birthtimeMs || stats.mtimeMs
     };
   })
