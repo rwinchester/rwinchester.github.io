@@ -1,0 +1,7 @@
+{
+  "name": "photogallery",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node generate-gallery.js"
+  }
+}
