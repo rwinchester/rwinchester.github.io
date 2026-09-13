@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Privacy & AI Indexing Protection -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="googlebot" content="noindex, nofollow">
   <title>Photo Gallery</title>
   <style>
     * {
@@ -28,7 +31,7 @@
       flex-direction: column;
       align-items: center;
       width: 100vw;
-      /* 30px spacing between photo cards */
+      /* 30px vertical spacing between cards */
       gap: 30px;
       padding-bottom: 30px;
     }
@@ -44,7 +47,7 @@
       padding: 40px 20px;
       scroll-snap-align: start;
       scroll-snap-stop: always;
-      /* Prevents layout collapse across aspect ratios */
+      /* Prevents layout collapse across aspect ratio transitions */
       flex-shrink: 0;
     }
 
@@ -53,7 +56,7 @@
       justify-content: center;
       align-items: center;
       width: 100%;
-      /* Leaves dedicated room for 30px gap + caption text below */
+      /* Dedicated space for image frame to preserve room for caption below */
       height: calc(100vh - 100px);
       overflow: hidden;
     }
@@ -72,7 +75,7 @@
       opacity: 1;
     }
 
-    /* Fixed caption styling placed neatly below the photo */
+    /* Filename caption placed directly below photo */
     .caption {
       margin-top: 16px;
       height: 24px;
@@ -94,6 +97,21 @@
   <div class="gallery" id="gallery"></div>
 
   <script>
+    // Case-insensitive passphrase check
+    const REQUIRED_PASSPHRASE = "circe";
+
+    if (sessionStorage.getItem("gallery_auth") !== "true") {
+      const input = prompt("Enter the passphrase to view the gallery:");
+
+      if (input && input.trim().toLowerCase() === REQUIRED_PASSPHRASE) {
+        sessionStorage.setItem("gallery_auth", "true");
+      } else {
+        alert("Incorrect passphrase.");
+        document.body.innerHTML = "<h1 style='color:#fff; text-align:center; margin-top:20vh; font-family:sans-serif;'>Access Denied</h1>";
+        throw new Error("Unauthorized access attempt.");
+      }
+    }
+
     let currentIndex = 0;
     let cards = [];
 
@@ -135,7 +153,6 @@
     }
 
     function setupKeyboardNavigation() {
-      // Track active photo on manual scroll
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
@@ -146,7 +163,6 @@
 
       cards.forEach(card => observer.observe(card));
 
-      // Handle Keyboard Shortcuts
       window.addEventListener('keydown', (e) => {
         if (['ArrowUp', 'ArrowLeft'].includes(e.key)) {
           e.preventDefault();
