@@ -115,6 +115,12 @@
     let currentIndex = 0;
     let cards = [];
 
+    // Inactivity and Slideshow Timers
+    let inactivityTimer = null;
+    let slideshowInterval = null;
+    const INACTIVITY_DELAY = 2 * 60 * 1000; // 2 minutes (in milliseconds)
+    const SLIDESHOW_INTERVAL = 1 * 60 * 1000; // 1 minute (in milliseconds)
+
     async function loadGallery() {
       try {
         const response = await fetch('./gallery-data.json');
@@ -147,6 +153,7 @@
 
         cards = document.querySelectorAll('.photo-card');
         setupKeyboardNavigation();
+        setupSlideshowController();
       } catch (err) {
         console.error("Failed to load images:", err);
       }
@@ -178,6 +185,47 @@
           }
         }
       });
+    }
+
+    // Advanced Slideshow Logic
+    function nextPhoto() {
+      if (cards.length === 0) return;
+      // Loop back to the beginning if we reach the end
+      currentIndex = (currentIndex + 1) % cards.length;
+      cards[currentIndex].scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function startSlideshow() {
+      if (!slideshowInterval) {
+        // Advance once immediately when starting, then every minute
+        nextPhoto();
+        slideshowInterval = setInterval(nextPhoto, SLIDESHOW_INTERVAL);
+      }
+    }
+
+    function stopSlideshow() {
+      if (slideshowInterval) {
+        clearInterval(slideshowInterval);
+        slideshowInterval = null;
+      }
+    }
+
+    function resetInactivityTimer() {
+      // User performed an action: stop active slideshow & reset delay
+      stopSlideshow();
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(startSlideshow, INACTIVITY_DELAY);
+    }
+
+    function setupSlideshowController() {
+      // Listen for user interactions to reset the 2-minute timer
+      window.addEventListener('keydown', resetInactivityTimer);
+      window.addEventListener('mousemove', resetInactivityTimer);
+      window.addEventListener('scroll', resetInactivityTimer, { passive: true });
+      window.addEventListener('touchstart', resetInactivityTimer, { passive: true });
+
+      // Start counting down right when the page loads
+      resetInactivityTimer();
     }
 
     loadGallery();
